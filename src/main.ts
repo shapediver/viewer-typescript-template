@@ -1,4 +1,4 @@
-import { SdViewerArApp as App } from './SdViewerArApp';
+import { SdViewerApp as App } from './SdViewerApp';
 
 // ShapeDiver Viewer Initialisation
 const initSdvApp = async function (/*event*/) {
@@ -7,7 +7,6 @@ const initSdvApp = async function (/*event*/) {
     const api = (<any>window).SDVApp.ParametricViewer({
         useModelSettings: true,
         createButtons: true,
-        arkitbridge: true,
     });
 
     // create app
@@ -22,9 +21,6 @@ const initSdvApp = async function (/*event*/) {
 
     // create GUI
     app.createGui();
-
-    // start AR session
-    await app.runSession();
    
 };
 

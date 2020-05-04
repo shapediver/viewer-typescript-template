@@ -7,6 +7,10 @@ export class SdViewerDatGUI {
 
     private gui: GUI;
 
+    /**
+     * @param api the ShapeDiver Viewer API instance to use
+     * @param options options for instantiating the dat.gui
+     */
     constructor(api : Api.ApiInterfaceV2, options? : GUIParams)
     {
         this.api = api;
@@ -24,6 +28,12 @@ export class SdViewerDatGUI {
         return folder;
     }
 
+    /**
+     * Add a model parameter to the GUI
+     * @param filter filter to use for searching the parameter to add, must result in a single parameter
+     * @param name optional name to display in the GUI
+     * @param folder optional GUI folder to add the parameter to
+     */
     public addParameter(filter : Parameter.ParameterDefinition, name? : string, folder : string = 'Parameters') : GUIController | undefined {
         
         const params = this.api.parameters.get(filter).data;
@@ -63,6 +73,16 @@ export class SdViewerDatGUI {
         return controller;
     }
 
+    /**
+     * Add a slider to the GUI
+     * @param name 
+     * @param defval 
+     * @param min 
+     * @param max 
+     * @param step 
+     * @param cb 
+     * @param folder 
+     */
     public addSlider(name : string, defval : number, min : number | undefined, max : number | undefined, step : number | undefined, cb : (v : number) => void, folder : string = 'Sliders') : GUIController {
         let valueObject : any= {};
         valueObject[name] = defval;
@@ -71,6 +91,13 @@ export class SdViewerDatGUI {
         });
     }
     
+    /**
+     * Add a boolean toggle to the GUI
+     * @param name 
+     * @param defval 
+     * @param cb 
+     * @param folder 
+     */
     public addToggle(name : string, defval : boolean, cb : (v : boolean) => void, folder : string = 'Toggles') : GUIController {
         let valueObject : any = {};
         valueObject[name] = defval;
@@ -79,6 +106,12 @@ export class SdViewerDatGUI {
         });
     }
 
+    /**
+     * Add a button to the GUI
+     * @param name 
+     * @param cb 
+     * @param folder 
+     */
     public addButton(name : string, cb : () => void, folder : string = 'Buttons') : GUIController {
         let valueObject : any = {};
         valueObject[name] = () => {};

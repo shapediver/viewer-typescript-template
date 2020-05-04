@@ -52,13 +52,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var shapediver_types_1 = require("shapediver-types");
 var SdViewerAppBase_1 = require("./SdViewerAppBase");
 var SdViewerDatGUI_1 = require("./SdViewerDatGUI");
-var SdViewerArApp = /** @class */ (function (_super) {
-    __extends(SdViewerArApp, _super);
+var SdViewerApp = /** @class */ (function (_super) {
+    __extends(SdViewerApp, _super);
     /**
      *
      * @param api ShapeDiver API object
      */
-    function SdViewerArApp(api) {
+    function SdViewerApp(api) {
         var _this = _super.call(this, api) || this;
         /**
          * model to load
@@ -66,23 +66,17 @@ var SdViewerArApp = /** @class */ (function (_super) {
         _this.ticket = 'c46b0bd423988b6d411121108d7611a9d2ffa2f6022071f45b37b1730fd9820c6a7d1c3a5780df23ae8bbac303e3e618697f8ba47bb0ffabe24c8843760976a743adcf54028cf388fd5e4c688ca9e5cc1450ef9b8ba3015c769d92c3deeade71a6ba7ece2b5b37a11befbaa6c2642cc8e81660892033-35f1dee65073c6c7bcd52a7282f99ad7';
         _this.modelViewUrl = 'eu-central-1';
         /**
-         * type of planes to detect
-         */
-        _this.planeDetection = ['horizontal'];
-        /**
          * helpers for displaying status information
          */
         _this.infoDomTop = document.getElementById('info-top');
         _this.infoDomBottom = document.getElementById('info-bottom');
-        _this.arEventListenerTokens = [];
         _this.sceneEventListenerTokens = [];
-        _this.cameraPosAndTarget = api.scene.camera.get().data;
         return _this;
     }
     /**
      * Load the model
      */
-    SdViewerArApp.prototype.loadModel = function () {
+    SdViewerApp.prototype.loadModel = function () {
         return __awaiter(this, void 0, void 0, function () {
             var commPluginOptions, settingsToOverride, _a;
             return __generator(this, function (_b) {
@@ -92,17 +86,7 @@ var SdViewerArApp = /** @class */ (function (_super) {
                             ticket: this.ticket,
                             modelViewUrl: this.modelViewUrl,
                         };
-                        settingsToOverride = {
-                            scene: {
-                                camera: {
-                                    enableCameraControls: true,
-                                }
-                            },
-                            ar: {
-                                enableCameraSync: false,
-                                enableAutomaticPlacement: true
-                            }
-                        };
+                        settingsToOverride = {};
                         _a = this;
                         return [4 /*yield*/, this.addModelToScene(commPluginOptions, null, settingsToOverride)];
                     case 1:
@@ -113,22 +97,9 @@ var SdViewerArApp = /** @class */ (function (_super) {
         });
     };
     /**
-     * start the AR session
-     */
-    SdViewerArApp.prototype.runSession = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                if (this.api.ar.getStatus().data.framework !== 'none') {
-                    return [2 /*return*/, this.api.ar.runSession(this.planeDetection)];
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
-    /**
      * create the GUI
      */
-    SdViewerArApp.prototype.createGui = function () {
+    SdViewerApp.prototype.createGui = function () {
         var _this = this;
         if (!this.gui) {
             this.gui = new SdViewerDatGUI_1.SdViewerDatGUI(this.api);
@@ -138,98 +109,39 @@ var SdViewerArApp = /** @class */ (function (_super) {
             this.gui.addParameter({ name: 'Height (mm)' });
             this.gui.addParameter({ name: 'Show Dimensions?' }, 'Dimensions');
             // toggles
-            this.gui.addToggle('Camera sync', this.api.getSetting('ar.enableCameraSync'), function (v) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            this.api.scene.pause();
-                            return [4 /*yield*/, this.api.updateSettingsAsync({
-                                    ar: { enableCameraSync: v },
-                                    scene: { camera: { enableCameraControls: !v } }
-                                })];
-                        case 1:
-                            _a.sent();
-                            if (!!v) return [3 /*break*/, 3];
-                            return [4 /*yield*/, this.api.scene.camera.updateAsync(this.cameraPosAndTarget, { duration: 0 })];
-                        case 2:
-                            _a.sent();
-                            return [3 /*break*/, 4];
-                        case 3:
-                            this.cameraPosAndTarget = this.api.scene.camera.get().data;
-                            _a.label = 4;
-                        case 4:
-                            this.api.scene.resume();
-                            return [2 /*return*/];
-                    }
-                });
-            }); }, 'AR');
-            this.gui.addToggle('Place object', this.api.getSetting('ar.enableAutomaticPlacement'), function (v) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.api.updateSettingsAsync({ ar: { enableAutomaticPlacement: v } })];
-                        case 1:
-                            _a.sent();
-                            return [2 /*return*/];
-                    }
-                });
-            }); }, 'AR');
-            var pauseSessionController_1 = this.gui.addToggle('Pause session', false, function (v) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (!v) return [3 /*break*/, 2];
-                            return [4 /*yield*/, this.api.ar.pauseSession()];
-                        case 1:
-                            _a.sent();
-                            return [3 /*break*/, 4];
-                        case 2: return [4 /*yield*/, this.api.ar.runSession(this.planeDetection)];
-                        case 3:
-                            _a.sent();
-                            _a.label = 4;
-                        case 4: return [2 /*return*/];
-                    }
-                });
-            }); }, 'AR');
             this.gui.addToggle('Show status', false, function (v) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     this.enableStatusDisplay(v);
                     return [2 /*return*/];
                 });
-            }); }, 'AR');
-            // buttons
-            this.gui.addButton('Reset & Restart', function () { return __awaiter(_this, void 0, void 0, function () {
+            }); }, 'Toggles');
+            this.gui.addToggle('Blur when busy', true, function (v) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    this.api.ar.runSession(this.planeDetection, ['resetTracking', 'removeExistingAnchors']);
-                    if (this.modelRuntimeId) {
-                        this.api.ar.resetPlacementAnchor(this.modelRuntimeId);
-                    }
-                    pauseSessionController_1.setValue(false);
+                    this.api.updateSettingAsync('blurSceneWhenBusy', false);
                     return [2 /*return*/];
                 });
-            }); }, 'AR');
+            }); }, 'Toggles');
             // sliders
             var scaleMatrix_1 = new THREE.Matrix4();
-            this.gui.addSlider('Scale', 1, 0.1, 10, 0.01, function (v) {
+            this.gui.addSlider('Scale', 1, 0.5, 2, 0.01, function (v) {
                 if (_this.modelRuntimeId) {
                     scaleMatrix_1.makeScale(v, v, v);
                     _this.api.scene.setTransformation(shapediver_types_1.Scene.TRANSFORMATIONTYPE.PLUGIN, _this.modelRuntimeId, [scaleMatrix_1]);
                 }
-            }, 'AR');
+            }, 'Sliders');
         }
     };
-    SdViewerArApp.prototype.updateStatusTop = function (event) {
+    SdViewerApp.prototype.updateStatusTop = function (text) {
         if (this.infoDomTop) {
-            if (event) {
-                var statusText = 'tracking: ' + event.tracking;
-                statusText += '<br> mapping: ' + event.worldMapping;
-                this.infoDomTop.innerHTML = statusText;
+            if (text) {
+                this.infoDomTop.innerHTML = text;
             }
             else {
                 this.infoDomTop.innerHTML = '';
             }
         }
     };
-    SdViewerArApp.prototype.updateStatusBottom = function (event) {
+    SdViewerApp.prototype.updateStatusBottom = function (event) {
         if (this.infoDomBottom) {
             if (event && event.framerate) {
                 var statusText = parseInt(event.framerate + '') + ' fps';
@@ -240,31 +152,22 @@ var SdViewerArApp = /** @class */ (function (_super) {
             }
         }
     };
-    SdViewerArApp.prototype.enableStatusDisplay = function (enable) {
+    SdViewerApp.prototype.enableStatusDisplay = function (enable) {
         var _this = this;
         if (enable) {
-            this.arEventListenerTokens.push(this.api.ar.addEventListener(shapediver_types_1.ArApi.EVENTTYPE.STATUS_TRACKING, function (arevent) {
-                _this.updateStatusTop(arevent);
-            }).data);
-            this.arEventListenerTokens.push(this.api.ar.addEventListener(shapediver_types_1.ArApi.EVENTTYPE.STATUS_MAPPING, function (arevent) {
-                _this.updateStatusTop(arevent);
-            }).data);
             this.sceneEventListenerTokens.push(this.api.scene.addEventListener(shapediver_types_1.Scene.EVENTTYPE.FRAMERATE, function (event) {
                 _this.updateStatusBottom(event);
             }).data);
         }
         else {
-            this.arEventListenerTokens.forEach(function (token) {
-                _this.api.ar.removeEventListener(token);
-            });
-            this.updateStatusTop();
             this.sceneEventListenerTokens.forEach(function (token) {
                 _this.api.scene.removeEventListener(token);
             });
             this.updateStatusBottom();
+            this.updateStatusTop();
         }
     };
-    return SdViewerArApp;
+    return SdViewerApp;
 }(SdViewerAppBase_1.SdViewerAppBase));
-exports.SdViewerArApp = SdViewerArApp;
-//# sourceMappingURL=SdViewerArApp.js.map
+exports.SdViewerApp = SdViewerApp;
+//# sourceMappingURL=SdViewerApp.js.map

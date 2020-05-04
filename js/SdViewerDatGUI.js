@@ -2,6 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var dat_gui_1 = require("dat.gui");
 var SdViewerDatGUI = /** @class */ (function () {
+    /**
+     * @param api the ShapeDiver Viewer API instance to use
+     * @param options options for instantiating the dat.gui
+     */
     function SdViewerDatGUI(api, options) {
         this.api = api;
         this.gui = new dat_gui_1.GUI(options);
@@ -17,6 +21,12 @@ var SdViewerDatGUI = /** @class */ (function () {
         }
         return folder;
     };
+    /**
+     * Add a model parameter to the GUI
+     * @param filter filter to use for searching the parameter to add, must result in a single parameter
+     * @param name optional name to display in the GUI
+     * @param folder optional GUI folder to add the parameter to
+     */
     SdViewerDatGUI.prototype.addParameter = function (filter, name, folder) {
         var _this = this;
         if (folder === void 0) { folder = 'Parameters'; }
@@ -52,6 +62,16 @@ var SdViewerDatGUI = /** @class */ (function () {
         });
         return controller;
     };
+    /**
+     * Add a slider to the GUI
+     * @param name
+     * @param defval
+     * @param min
+     * @param max
+     * @param step
+     * @param cb
+     * @param folder
+     */
     SdViewerDatGUI.prototype.addSlider = function (name, defval, min, max, step, cb, folder) {
         if (folder === void 0) { folder = 'Sliders'; }
         var valueObject = {};
@@ -60,6 +80,13 @@ var SdViewerDatGUI = /** @class */ (function () {
             cb(v);
         });
     };
+    /**
+     * Add a boolean toggle to the GUI
+     * @param name
+     * @param defval
+     * @param cb
+     * @param folder
+     */
     SdViewerDatGUI.prototype.addToggle = function (name, defval, cb, folder) {
         if (folder === void 0) { folder = 'Toggles'; }
         var valueObject = {};
@@ -68,6 +95,12 @@ var SdViewerDatGUI = /** @class */ (function () {
             cb(v);
         });
     };
+    /**
+     * Add a button to the GUI
+     * @param name
+     * @param cb
+     * @param folder
+     */
     SdViewerDatGUI.prototype.addButton = function (name, cb, folder) {
         if (folder === void 0) { folder = 'Buttons'; }
         var valueObject = {};

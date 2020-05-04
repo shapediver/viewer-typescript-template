@@ -20,7 +20,7 @@ export class SdViewerAppBase {
      * 
      * @param commPluginOptions must contain at least a `ticket` and a `modelViewUrl`, 
      *                          `runtimeId` will be set automatically according to the scheme 'CommPlugin_X' in case none is provided
-     * @param initialParameterValues optional initial parameter values to set, if not provided defaul parameter values will be used 
+     * @param initialParameterValues optional initial parameter values to set, if not provided default parameter values will be used 
      * @param settings optional object of settings to restore
      *                  will be restored immediately in case the viewer has been constructed with `useModelSettings` set to false
      *                  will be restored after stored model settings have been restored in case the viewer has been constructed with `useModelSettings` set to true

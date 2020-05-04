@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var SdViewerArApp_1 = require("./SdViewerArApp");
+var SdViewerApp_1 = require("./SdViewerApp");
 // ShapeDiver Viewer Initialisation
 var initSdvApp = function ( /*event*/) {
     return __awaiter(this, void 0, void 0, function () {
@@ -47,9 +47,8 @@ var initSdvApp = function ( /*event*/) {
                     api = window.SDVApp.ParametricViewer({
                         useModelSettings: true,
                         createButtons: true,
-                        arkitbridge: true,
                     });
-                    app = new SdViewerArApp_1.SdViewerArApp(api);
+                    app = new SdViewerApp_1.SdViewerApp(api);
                     // set app and api as properties of window object
                     window.app = app;
                     window.api = api;
@@ -60,11 +59,6 @@ var initSdvApp = function ( /*event*/) {
                     _a.sent();
                     // create GUI
                     app.createGui();
-                    // start AR session
-                    return [4 /*yield*/, app.runSession()];
-                case 2:
-                    // start AR session
-                    _a.sent();
                     return [2 /*return*/];
             }
         });
