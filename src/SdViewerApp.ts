@@ -18,7 +18,7 @@ export class SdViewerApp extends SdViewerAppBase {
     /**
      * the dat.gui we are using
      */
-    private gui? : SdViewerDatGUI;
+    private datgui? : SdViewerDatGUI;
 
     /**
      * helpers for displaying status information
@@ -58,29 +58,29 @@ export class SdViewerApp extends SdViewerAppBase {
     /**
      * create the GUI
      */
-    public createGui() : void {
-        if (!this.gui) {
+    public createDatGui() : void {
+        if (!this.datgui) {
 
-            this.gui = new SdViewerDatGUI(this.api);
+            this.datgui = new SdViewerDatGUI(this.api);
 
             // parameters
-            this.gui.addParameter({name: 'Length (mm)'});
-            this.gui.addParameter({name: 'Width (mm)'});
-            this.gui.addParameter({name: 'Height (mm)'});
-            this.gui.addParameter({name: 'Show Dimensions?'}, 'Dimensions');
+            this.datgui.addParameter({name: 'Length (mm)'});
+            this.datgui.addParameter({name: 'Width (mm)'});
+            this.datgui.addParameter({name: 'Height (mm)'});
+            this.datgui.addParameter({name: 'Show Dimensions?'}, 'Dimensions');
 
             // toggles
-            this.gui.addToggle('Show status', false, async (v) => {
+            this.datgui.addToggle('Show status', false, async (v) => {
                 this.enableStatusDisplay(v);
             }, 'Toggles');
 
-            this.gui.addToggle('Blur when busy', true, async (v) => {
+            this.datgui.addToggle('Blur when busy', true, async (v) => {
                 this.api.updateSettingAsync('blurSceneWhenBusy', false);
             }, 'Toggles');
             
             // sliders
             const scaleMatrix = new THREE.Matrix4();
-            this.gui.addSlider('Scale', 1, 0.5, 2, 0.01, (v) => {
+            this.datgui.addSlider('Scale', 1, 0.5, 2, 0.01, (v) => {
                 if (this.modelRuntimeId) {
                     scaleMatrix.makeScale(v,v,v);
                     this.api.scene.setTransformation(Scene.TRANSFORMATIONTYPE.PLUGIN, this.modelRuntimeId, [scaleMatrix]);

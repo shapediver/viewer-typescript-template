@@ -19,8 +19,8 @@ const initSdvApp = async function (/*event*/) {
     // load model
     await app.loadModel();
 
-    // create GUI
-    app.createGui();
+    // create dat.gui
+    app.createDatGui();
    
 };
 
