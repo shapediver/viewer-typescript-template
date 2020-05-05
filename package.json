@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run clean && tsc && cpy '**/*' '!**/*.ts' ../js/ --cwd=src --no-overwrite --parents && cpy '**/*' ../dist/content/ --cwd=content --parents && cpy '*.html' ../dist/ --cwd=js && webpack",
+    "build": "npm run clean && tsc && cpy '**/*' '!**/*.ts' ../js/ --cwd=src --no-overwrite --parents && cpy '*.html' ../dist/ --cwd=js && webpack",
     "clean": "del-cli 'dist/**/*' && del-cli 'js/**/*'"
   },
   "author": "ShapeDiver GmbH",
