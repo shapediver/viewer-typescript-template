@@ -80,49 +80,75 @@ export class SdViewerControls {
     }
 
     /**
-     * Add a model parameter to the GUI
+     * Add a control for a model parameter to the GUI
      * @param filter filter to use for searching the parameter to add, must result in a single parameter
      * @param name optional name to display in the GUI
-     * @param folder optional GUI folder to add the parameter to
+     * @param group TODO optional GUI group to add the parameter to
      */
-    // public addParameter(filter : Parameter.ParameterDefinition, name? : string, folder : string = 'Parameters') : Promise<string> {
+    public async addParameterControl(filter : Parameter.ParameterDefinition, name? : string, group : string = 'Parameters') : Promise<string | void> {
         
-    // }
+        const params = this.api.parameters.get(filter).data;
+        if (params.length !== 1) {
+            return;
+        }
+        const def = params[0];
+        const param = this.mapParameter(def);
+        if (name) param.name = name;
+        
+        const id = await this.api.apps.controls.createParameter(param);
+        return id;
+    }
 
     /**
-     * Add a slider to the GUI
-     * @param name 
-     * @param defval 
-     * @param min 
-     * @param max 
-     * @param step 
-     * @param cb 
-     * @param folder 
+     * Update an existing parameter control according to a (partial) parameter definition, e.g. in order to update min/max values of a slider
+     * @param filter filter to use for searching the parameter to update, must result in a single parameter
+     * @param def (partial) parameter definition to use for updating the control
      */
-    // public addSlider(name : string, defval : number, min : number | undefined, max : number | undefined, step : number | undefined, cb : (v : number) => void, folder : string = 'Sliders') : Promise<string> {
+    public async updateParameterControl(filter : Parameter.ParameterDefinition, def : Parameter.ParameterDefinition) : Promise<string | void> {
+        // TODO to be discussed, redefined, implemented
+    }
+
+    /**
+     * TODO to be replaced by a call to the viewer controls which must already contain this logic, no sense to duplicate this functionality 
+     * @param type 
+     */
+    protected mapParameterType(type : Parameter.ParameterType) : Controls.ControlParameterType {
+        if (type === this.api.parameters.TYPE.BOOL) {
+            return Controls.ControlParameterType.CHECKBOX;
+        } else if (type === this.api.parameters.TYPE.EVEN || type === this.api.parameters.TYPE.FLOAT || type === this.api.parameters.TYPE.INT || type === this.api.parameters.TYPE.ODD) {
+            return Controls.ControlParameterType.SLIDER;
+        } else if (type === this.api.parameters.TYPE.COLOR) {
+            return Controls.ControlParameterType.COLOR;
+        } else if (type === this.api.parameters.TYPE.FILE) {
+            return Controls.ControlParameterType.FILE;
+        } else if (type === this.api.parameters.TYPE.STRING) {
+            return Controls.ControlParameterType.STRING;
+        }
+
+        return Controls.ControlParameterType.STATICHTML;
+    }
+
+    /**
+     * TODO to be replaced by a call to the viewer controls which must already contain this logic, no sense to duplicate this functionality 
+     * @param def 
+     */
+    protected mapParameter(def : Parameter.ParameterDefinition) : Controls.ControlParameterDefinition {
+        
+        def.visualization
+        const param : Controls.ControlParameterDefinition = {type: this.mapParameterType(def.type as string)};
+        
+        param.name = def.name;
+        param.value = def.defval;
+
+        if (def.min) param.min = parseFloat(def.min);
+        if (def.max) param.max = parseFloat(def.max);
+        if (def.decimalplaces !== undefined) param.step = Math.pow(0.1, def.decimalplaces);
        
-    // }
-    
-    /**
-     * Add a boolean toggle to the GUI
-     * @param name 
-     * @param defval 
-     * @param cb 
-     * @param folder 
-     */
-    // public addToggle(name : string, defval : boolean, cb : (v : boolean) => void, folder : string = 'Toggles') : Promise<string> {
-        
-    // }
+        param.link = {id: def.id, plugin: def.plugin};
 
-    /**
-     * Add a button to the GUI
-     * @param name 
-     * @param cb 
-     * @param folder 
-     */
-    // public addButton(name : string, cb : () => void, folder : string = 'Buttons') : Promise<string> {
-        
-    // }
+        return param;
+    }
+
 
 }
 

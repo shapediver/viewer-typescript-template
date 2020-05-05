@@ -71,6 +71,8 @@ export class SdViewerApp extends SdViewerAppBase {
 
             this.controls.hideAllParameterControls();
             this.controls.hideAllExportControls();
+
+            this.controls.addParameterControl({name: "Length (mm)"}, 'Length (millimeter)');
         }
     }
 

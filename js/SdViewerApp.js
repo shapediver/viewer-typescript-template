@@ -105,6 +105,7 @@ var SdViewerApp = /** @class */ (function (_super) {
             this.controls = new SdViewerControls_1.SdViewerControls(this.api);
             this.controls.hideAllParameterControls();
             this.controls.hideAllExportControls();
+            this.controls.addParameterControl({ name: "Length (mm)" }, 'Length (millimeter)');
         }
     };
     /**
