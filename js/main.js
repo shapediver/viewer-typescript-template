@@ -39,10 +39,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SdViewerApp_1 = require("./SdViewerApp");
 // ShapeDiver Viewer Initialisation
 var initSdvApp = function ( /*event*/) {
+    var _a;
     return __awaiter(this, void 0, void 0, function () {
         var api, app;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     api = window.SDVApp.ParametricViewer({
                         useModelSettings: true,
@@ -56,9 +57,10 @@ var initSdvApp = function ( /*event*/) {
                     return [4 /*yield*/, app.loadModel()];
                 case 1:
                     // load model
-                    _a.sent();
-                    // create GUI
-                    app.createGui();
+                    _b.sent();
+                    // create custom controls and show them
+                    app.createCustomControls();
+                    (_a = app.controls) === null || _a === void 0 ? void 0 : _a.toggleControlsTab(true);
                     return [2 /*return*/];
             }
         });

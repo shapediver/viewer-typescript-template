@@ -1,6 +1,7 @@
 import { Api, Camera, ArApi, Scene } from 'shapediver-types';
 import { SdViewerAppBase } from './SdViewerAppBase';
 import { SdViewerDatGUI } from './SdViewerDatGUI';
+import { SdViewerControls } from './SdViewerControls';
 
 export class SdViewerApp extends SdViewerAppBase {
 
@@ -14,6 +15,11 @@ export class SdViewerApp extends SdViewerAppBase {
      * runtimeId of CommPlugin
      */
     private modelRuntimeId? : string;
+
+    /**
+     * the viewer controls
+     */
+    public controls? : SdViewerControls;
 
     /**
      * the dat.gui we are using
@@ -56,7 +62,20 @@ export class SdViewerApp extends SdViewerAppBase {
     }
 
     /**
-     * create the GUI
+     * create custom controls based on the ShapeDiver Viewer controls
+     */
+    public createCustomControls() : void {
+        if (!this.controls) {
+
+            this.controls = new SdViewerControls(this.api);
+
+            this.controls.hideAllParameterControls();
+            this.controls.hideAllExportControls();
+        }
+    }
+
+    /**
+     * create custom controls based on dat.gui
      */
     public createDatGui() : void {
         if (!this.datgui) {

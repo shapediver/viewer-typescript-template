@@ -19,8 +19,12 @@ const initSdvApp = async function (/*event*/) {
     // load model
     await app.loadModel();
 
+    // create custom controls and show them
+    app.createCustomControls();
+    app.controls?.toggleControlsTab(true);
+
     // create dat.gui
-    app.createDatGui();
+    //app.createDatGui();
    
 };
 

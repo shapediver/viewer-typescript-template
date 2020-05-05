@@ -52,6 +52,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var shapediver_types_1 = require("shapediver-types");
 var SdViewerAppBase_1 = require("./SdViewerAppBase");
 var SdViewerDatGUI_1 = require("./SdViewerDatGUI");
+var SdViewerControls_1 = require("./SdViewerControls");
 var SdViewerApp = /** @class */ (function (_super) {
     __extends(SdViewerApp, _super);
     /**
@@ -97,25 +98,35 @@ var SdViewerApp = /** @class */ (function (_super) {
         });
     };
     /**
-     * create the GUI
+     * create custom controls based on the ShapeDiver Viewer controls
      */
-    SdViewerApp.prototype.createGui = function () {
+    SdViewerApp.prototype.createCustomControls = function () {
+        if (!this.controls) {
+            this.controls = new SdViewerControls_1.SdViewerControls(this.api);
+            this.controls.hideAllParameterControls();
+            this.controls.hideAllExportControls();
+        }
+    };
+    /**
+     * create custom controls based on dat.gui
+     */
+    SdViewerApp.prototype.createDatGui = function () {
         var _this = this;
-        if (!this.gui) {
-            this.gui = new SdViewerDatGUI_1.SdViewerDatGUI(this.api);
+        if (!this.datgui) {
+            this.datgui = new SdViewerDatGUI_1.SdViewerDatGUI(this.api);
             // parameters
-            this.gui.addParameter({ name: 'Length (mm)' });
-            this.gui.addParameter({ name: 'Width (mm)' });
-            this.gui.addParameter({ name: 'Height (mm)' });
-            this.gui.addParameter({ name: 'Show Dimensions?' }, 'Dimensions');
+            this.datgui.addParameter({ name: 'Length (mm)' });
+            this.datgui.addParameter({ name: 'Width (mm)' });
+            this.datgui.addParameter({ name: 'Height (mm)' });
+            this.datgui.addParameter({ name: 'Show Dimensions?' }, 'Dimensions');
             // toggles
-            this.gui.addToggle('Show status', false, function (v) { return __awaiter(_this, void 0, void 0, function () {
+            this.datgui.addToggle('Show status', false, function (v) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     this.enableStatusDisplay(v);
                     return [2 /*return*/];
                 });
             }); }, 'Toggles');
-            this.gui.addToggle('Blur when busy', true, function (v) { return __awaiter(_this, void 0, void 0, function () {
+            this.datgui.addToggle('Blur when busy', true, function (v) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     this.api.updateSettingAsync('blurSceneWhenBusy', false);
                     return [2 /*return*/];
@@ -123,7 +134,7 @@ var SdViewerApp = /** @class */ (function (_super) {
             }); }, 'Toggles');
             // sliders
             var scaleMatrix_1 = new THREE.Matrix4();
-            this.gui.addSlider('Scale', 1, 0.5, 2, 0.01, function (v) {
+            this.datgui.addSlider('Scale', 1, 0.5, 2, 0.01, function (v) {
                 if (_this.modelRuntimeId) {
                     scaleMatrix_1.makeScale(v, v, v);
                     _this.api.scene.setTransformation(shapediver_types_1.Scene.TRANSFORMATIONTYPE.PLUGIN, _this.modelRuntimeId, [scaleMatrix_1]);

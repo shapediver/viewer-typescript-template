@@ -148,6 +148,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var shapediver_types_1 = __webpack_require__(/*! shapediver-types */ "./node_modules/shapediver-types/lib/SDVApp.js");
 var SdViewerAppBase_1 = __webpack_require__(/*! ./SdViewerAppBase */ "./js/SdViewerAppBase.js");
 var SdViewerDatGUI_1 = __webpack_require__(/*! ./SdViewerDatGUI */ "./js/SdViewerDatGUI.js");
+var SdViewerControls_1 = __webpack_require__(/*! ./SdViewerControls */ "./js/SdViewerControls.js");
 var SdViewerApp = /** @class */ (function (_super) {
     __extends(SdViewerApp, _super);
     /**
@@ -193,25 +194,35 @@ var SdViewerApp = /** @class */ (function (_super) {
         });
     };
     /**
-     * create the GUI
+     * create custom controls based on the ShapeDiver Viewer controls
      */
-    SdViewerApp.prototype.createGui = function () {
+    SdViewerApp.prototype.createCustomControls = function () {
+        if (!this.controls) {
+            this.controls = new SdViewerControls_1.SdViewerControls(this.api);
+            this.controls.hideAllParameterControls();
+            this.controls.hideAllExportControls();
+        }
+    };
+    /**
+     * create custom controls based on dat.gui
+     */
+    SdViewerApp.prototype.createDatGui = function () {
         var _this = this;
-        if (!this.gui) {
-            this.gui = new SdViewerDatGUI_1.SdViewerDatGUI(this.api);
+        if (!this.datgui) {
+            this.datgui = new SdViewerDatGUI_1.SdViewerDatGUI(this.api);
             // parameters
-            this.gui.addParameter({ name: 'Length (mm)' });
-            this.gui.addParameter({ name: 'Width (mm)' });
-            this.gui.addParameter({ name: 'Height (mm)' });
-            this.gui.addParameter({ name: 'Show Dimensions?' }, 'Dimensions');
+            this.datgui.addParameter({ name: 'Length (mm)' });
+            this.datgui.addParameter({ name: 'Width (mm)' });
+            this.datgui.addParameter({ name: 'Height (mm)' });
+            this.datgui.addParameter({ name: 'Show Dimensions?' }, 'Dimensions');
             // toggles
-            this.gui.addToggle('Show status', false, function (v) { return __awaiter(_this, void 0, void 0, function () {
+            this.datgui.addToggle('Show status', false, function (v) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     this.enableStatusDisplay(v);
                     return [2 /*return*/];
                 });
             }); }, 'Toggles');
-            this.gui.addToggle('Blur when busy', true, function (v) { return __awaiter(_this, void 0, void 0, function () {
+            this.datgui.addToggle('Blur when busy', true, function (v) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     this.api.updateSettingAsync('blurSceneWhenBusy', false);
                     return [2 /*return*/];
@@ -219,7 +230,7 @@ var SdViewerApp = /** @class */ (function (_super) {
             }); }, 'Toggles');
             // sliders
             var scaleMatrix_1 = new THREE.Matrix4();
-            this.gui.addSlider('Scale', 1, 0.5, 2, 0.01, function (v) {
+            this.datgui.addSlider('Scale', 1, 0.5, 2, 0.01, function (v) {
                 if (_this.modelRuntimeId) {
                     scaleMatrix_1.makeScale(v, v, v);
                     _this.api.scene.setTransformation(shapediver_types_1.Scene.TRANSFORMATIONTYPE.PLUGIN, _this.modelRuntimeId, [scaleMatrix_1]);
@@ -391,6 +402,84 @@ var SdViewerAppBase = /** @class */ (function () {
     return SdViewerAppBase;
 }());
 exports.SdViewerAppBase = SdViewerAppBase;
+
+
+/***/ }),
+
+/***/ "./js/SdViewerControls.js":
+/*!********************************!*\
+  !*** ./js/SdViewerControls.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var shapediver_types_1 = __webpack_require__(/*! shapediver-types */ "./node_modules/shapediver-types/lib/SDVApp.js");
+var SdViewerControls = /** @class */ (function () {
+    /**
+     * @param api the ShapeDiver Viewer API instance to use
+     * @param options options for instantiating the dat.gui
+     */
+    function SdViewerControls(api) {
+        this.api = api;
+    }
+    /**
+     * Hides controls for all registered parameters
+     */
+    SdViewerControls.prototype.hideAllParameterControls = function () {
+        this.toggleAllParameters(false);
+    };
+    /**
+     * Shows controls for all registered parameters
+     */
+    SdViewerControls.prototype.showAllParameterControls = function () {
+        this.toggleAllParameters(true);
+    };
+    SdViewerControls.prototype.toggleAllParameters = function (show) {
+        var params = [];
+        this.api.parameters.get().data.forEach(function (p) {
+            params.push({ id: p.id, hidden: !show });
+        });
+        this.api.parameters.updateProperties(params);
+    };
+    /**
+     * Hides controls for all registered exports
+     */
+    SdViewerControls.prototype.hideAllExportControls = function () {
+        this.toggleAllExports(false);
+    };
+    /**
+     * Shows controls for all registered exports
+     */
+    SdViewerControls.prototype.showAllExportControls = function () {
+        this.toggleAllExports(true);
+    };
+    SdViewerControls.prototype.toggleAllExports = function (show) {
+        var exports = [];
+        this.api.exports.get().data.forEach(function (p) {
+            exports.push({ id: p.id, hidden: !show });
+        });
+        this.api.exports.updateProperties(exports);
+    };
+    /**
+     * Show or hide parameter controls tab
+     * @param show
+     */
+    SdViewerControls.prototype.toggleControlsTab = function (show) {
+        this.api.apps.overlays.buttonOnClick(shapediver_types_1.Overlays.ButtonType.CONTROLS, show);
+    };
+    /**
+     * Show or hide setting controls tab
+     * @param show
+     */
+    SdViewerControls.prototype.toggleSettingsTab = function (show) {
+        this.api.apps.overlays.buttonOnClick(shapediver_types_1.Overlays.ButtonType.SETTINGS, show);
+    };
+    return SdViewerControls;
+}());
+exports.SdViewerControls = SdViewerControls;
 
 
 /***/ }),
@@ -570,10 +659,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SdViewerApp_1 = __webpack_require__(/*! ./SdViewerApp */ "./js/SdViewerApp.js");
 // ShapeDiver Viewer Initialisation
 var initSdvApp = function ( /*event*/) {
+    var _a;
     return __awaiter(this, void 0, void 0, function () {
         var api, app;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     api = window.SDVApp.ParametricViewer({
                         useModelSettings: true,
@@ -587,9 +677,10 @@ var initSdvApp = function ( /*event*/) {
                     return [4 /*yield*/, app.loadModel()];
                 case 1:
                     // load model
-                    _a.sent();
-                    // create GUI
-                    app.createGui();
+                    _b.sent();
+                    // create custom controls and show them
+                    app.createCustomControls();
+                    (_a = app.controls) === null || _a === void 0 ? void 0 : _a.toggleControlsTab(true);
                     return [2 /*return*/];
             }
         });
@@ -3318,6 +3409,8 @@ const ApiViewportsV2_1_interface_1 = __webpack_require__(/*! ./v2/interfaces/Api
 exports.Viewports = ApiViewportsV2_1_interface_1.Viewports;
 const ViewerControlsApp_interface_1 = __webpack_require__(/*! ./apps/controls/ViewerControlsApp.interface */ "./node_modules/shapediver-types/lib/apps/controls/ViewerControlsApp.interface.js");
 exports.Controls = ViewerControlsApp_interface_1.Controls;
+const ViewerOverlaysApp_interface_1 = __webpack_require__(/*! ./apps/overlays/ViewerOverlaysApp.interface */ "./node_modules/shapediver-types/lib/apps/overlays/ViewerOverlaysApp.interface.js");
+exports.Overlays = ViewerOverlaysApp_interface_1.Overlays;
 
 
 /***/ }),
@@ -3353,6 +3446,43 @@ var Controls;
         ControlParameterType["STATICHTML"] = "statichtml";
     })(ControlParameterType = Controls.ControlParameterType || (Controls.ControlParameterType = {}));
 })(Controls = exports.Controls || (exports.Controls = {}));
+
+
+/***/ }),
+
+/***/ "./node_modules/shapediver-types/lib/apps/overlays/ViewerOverlaysApp.interface.js":
+/*!****************************************************************************************!*\
+  !*** ./node_modules/shapediver-types/lib/apps/overlays/ViewerOverlaysApp.interface.js ***!
+  \****************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Overlays;
+(function (Overlays) {
+    /**
+     * The button type.
+     */
+    let ButtonType;
+    (function (ButtonType) {
+        ButtonType["CONTROLS"] = "controls";
+        ButtonType["SETTINGS"] = "settings";
+        ButtonType["ZOOM"] = "zoom";
+        ButtonType["FULLSCREEN"] = "fullscreen";
+    })(ButtonType = Overlays.ButtonType || (Overlays.ButtonType = {}));
+    /**
+     * The message type
+     */
+    let MessageType;
+    (function (MessageType) {
+        MessageType["PRIMARY"] = "primary";
+        MessageType["SUCCESS"] = "success";
+        MessageType["WARNING"] = "warning";
+        MessageType["DANGER"] = "danger";
+    })(MessageType = Overlays.MessageType || (Overlays.MessageType = {}));
+})(Overlays = exports.Overlays || (exports.Overlays = {}));
 
 
 /***/ }),
