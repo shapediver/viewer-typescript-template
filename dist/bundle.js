@@ -145,6 +145,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SdViewerApp = void 0;
 var shapediver_types_1 = __webpack_require__(/*! shapediver-types */ "./node_modules/shapediver-types/lib/SDVApp.js");
 var SdViewerAppBase_1 = __webpack_require__(/*! ./SdViewerAppBase */ "./js/SdViewerAppBase.js");
 var SdViewerDatGUI_1 = __webpack_require__(/*! ./SdViewerDatGUI */ "./js/SdViewerDatGUI.js");
@@ -328,6 +329,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SdViewerAppBase = void 0;
 var SdViewerAppBase = /** @class */ (function () {
     /**
      *
@@ -453,6 +455,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SdViewerControls = void 0;
 var shapediver_types_1 = __webpack_require__(/*! shapediver-types */ "./node_modules/shapediver-types/lib/SDVApp.js");
 var SdViewerControls = /** @class */ (function () {
     /**
@@ -612,6 +615,7 @@ exports.SdViewerControls = SdViewerControls;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SdViewerDatGUI = void 0;
 var dat_gui_1 = __webpack_require__(/*! dat.gui */ "./node_modules/dat.gui/build/dat.gui.module.js");
 var SdViewerDatGUI = /** @class */ (function () {
     /**
@@ -783,7 +787,7 @@ var initSdvApp = function ( /*event*/) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    api = window.SDVApp.ParametricViewer({
+                    api = new SDVApp.ParametricViewer({
                         useModelSettings: true,
                         createButtons: true,
                     });

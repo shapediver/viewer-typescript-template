@@ -4,7 +4,8 @@ import { SdViewerApp as App } from './SdViewerApp';
 const initSdvApp = async function (/*event*/) {
     
     // create viewer
-    const api = (<any>window).SDVApp.ParametricViewer({
+    // @ts-ignore
+    const api = new SDVApp.ParametricViewer({
         useModelSettings: true,
         createButtons: true,
     });
